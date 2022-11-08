@@ -1,23 +1,27 @@
+const url = 'http://localhost:3000/api/products';
+
 //if exist, get products information in localStorage, else get its in API
 let products = window.localStorage.getItem('products');
 
 if (products !== null) {
     products = JSON.parse(products);
 } else {
-    const response = await fetch('http://localhost:3000/api/products');
-    let products = await response.json();
+    const response =  await fetch(url);
+    products =  await response.json();
     const productsData = JSON.stringify(products);
     window.localStorage.setItem('products', productsData);
 }
 
-//Looop through products, create HTML elements and display informations
+
+//Loop through products, create HTML elements and display informations
 for (let i = 0; i< products.length; i++) {
     console.log(products[i].name);
 
     let section = document.querySelector('#items');
     
     let a = document.createElement('a');
-    a.setAttribute('href', './product.html?id='+products[i]._id);
+    let productUrl = new URL('./product.html?id='+products[i]._id)
+    a.setAttribute('href', productUrl/*'./product.html?id='+products[i]._id*/);
     section.appendChild(a);
 
     let article = document.createElement('article');
@@ -38,3 +42,4 @@ for (let i = 0; i< products.length; i++) {
     p.textContent = products[i].description;
     article.appendChild(p);
 }
+
