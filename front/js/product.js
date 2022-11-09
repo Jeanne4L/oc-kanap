@@ -1,6 +1,5 @@
 let params = new URLSearchParams(document.location.search);
 let id = params.get('id');
-console.log(id);
 
 fetch('http://localhost:3000/api/products')
 .then(function(response) {
@@ -15,10 +14,22 @@ fetch('http://localhost:3000/api/products')
 
             document.querySelector('#title').textContent = products[i].name;
 
-            var price = document.querySelector('#price');
+            //change price according to quantity
+            let price = document.querySelector('#price');
             price.textContent = products[i].price;
+            let qty = document.querySelector('#quantity');
+            qty.addEventListener('input', () => {
+                if(qty.value !== 0) {
+                    price.textContent = products[i].price * qty.value;
+                } 
+            })
 
             document.querySelector('#description').textContent = products[i].description;
+
+            let colors = products[i].colors;
+            for(let c = 0; c < colors.length; c++) {
+                document.querySelector('#colors').innerHTML += '<option value="'+products[i].colors[c]+'">'+products[i].colors[c]+'</option>';
+            }
         }
     }
 })
