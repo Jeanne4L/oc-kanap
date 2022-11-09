@@ -1,45 +1,24 @@
-const url = 'http://localhost:3000/api/products';
+//request to get products information and if exist, display its
+fetch('http://localhost:3000/api/products')
+.then(function(response) {
+    if(response.ok) {
+        return response.json();
+    }
+})
+.then(function(products){
+    for (let i = 0; i< products.length; i++) {
+        let section = document.querySelector('#items');
 
-//if exist, get products information in localStorage, else get its in API
-let products = window.localStorage.getItem('products');
-
-if (products !== null) {
-    products = JSON.parse(products);
-} else {
-    const response =  await fetch(url);
-    products =  await response.json();
-    const productsData = JSON.stringify(products);
-    window.localStorage.setItem('products', productsData);
-}
-
-
-//Loop through products, create HTML elements and display informations
-for (let i = 0; i< products.length; i++) {
-    console.log(products[i].name);
-
-    let section = document.querySelector('#items');
-    
-    let a = document.createElement('a');
-    let productUrl = new URL('./product.html?id='+products[i]._id)
-    a.setAttribute('href', productUrl/*'./product.html?id='+products[i]._id*/);
-    section.appendChild(a);
-
-    let article = document.createElement('article');
-    a.appendChild(article);
-
-    let img = document.createElement('img');
-    img.setAttribute('src', products[i].imageUrl);
-    img.setAttribute('alt', products[i].altTxt)
-    article.appendChild(img);
-
-    let title = document.createElement('h3');
-    title.setAttribute('class', products[i].productName);
-    title.textContent = products[i].name;
-    article.appendChild(title);
-
-    let p = document.createElement('p');
-    p.setAttribute('class', products[i].productDescription);
-    p.textContent = products[i].description;
-    article.appendChild(p);
-}
-
+        section.innerHTML += 
+        '<a href="./product.html?id='+products[i]._id+'">' 
+            +'<article>' +
+                '<img src="'+products[i].imageUrl+'" alt="'+products[i].altTxt+'">' +
+                '<h3 class="productName">'+products[i].name+'</h3>'+
+                '<p class="productDescription">'+products[i].description+'</p>'+
+            '</article>'+
+        '</a>';
+    }
+})
+.catch(function (erreur) {
+    erreur = alert('Erreur');
+})
