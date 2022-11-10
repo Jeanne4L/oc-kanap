@@ -19,6 +19,15 @@ fetch('http://localhost:3000/api/products')
 
             document.querySelector('#title').textContent = products[i].name;
 
+            document.querySelector('#description').textContent = products[i].description;
+
+            //loop through choice of color
+            let colors = products[i].colors;
+            for(let c = 0; c < colors.length; c++) {
+                colorChoice = document.querySelector('#colors');
+                colorChoice.innerHTML += '<option value="'+products[i].colors[c]+'">'+products[i].colors[c]+'</option>';
+            }
+
             //change price according to quantity
             let price = document.querySelector('#price');
             price.textContent = products[i].price;
@@ -28,20 +37,13 @@ fetch('http://localhost:3000/api/products')
                     price.textContent = products[i].price * qty.value;
                 } 
             })
-
-            document.querySelector('#description').textContent = products[i].description;
-
-            let colors = products[i].colors;
-            for(let c = 0; c < colors.length; c++) {
-                colorChoice = document.querySelector('#colors');
-                colorChoice.innerHTML += '<option value="'+products[i].colors[c]+'">'+products[i].colors[c]+'</option>';
-            }
         }
     }
-    // send id, chosen color and quantity to the cart with localStorage
+    // event click => send ID, chosen color and quantity to the cart with localStorage
     let submitBtn = document.querySelector('#addToCart');
     submitBtn.addEventListener('click', () => {
-        let productData = [];
+        let productData = {};
+        //if exists in LocalStorage => get it and push new data else create it
         productData = JSON.parse(localStorage.getItem('productData'));
         
         if(productData) {
@@ -52,7 +54,6 @@ fetch('http://localhost:3000/api/products')
             });
             localStorage.setItem('productData', JSON.stringify(productData));
         } else {
-            productData = [];
             productData.push({
                 id: id,
                 color: colorChoice.value,
@@ -60,6 +61,7 @@ fetch('http://localhost:3000/api/products')
             });
             localStorage.setItem('productData', JSON.stringify(productData));
         }
+        console.log(productData); 
     })
     
 })

@@ -7,9 +7,8 @@ fetch('http://localhost:3000/api/products')
 })
 .then(function(products){
     for (let i = 0; i< products.length; i++) {
-        let section = document.querySelector('#items');
-
-        section.innerHTML += 
+        
+        document.querySelector('#items').innerHTML += 
         '<a href="./product.html?id='+products[i]._id+'">' 
             +'<article>' +
                 '<img src="'+products[i].imageUrl+'" alt="'+products[i].altTxt+'">' +
