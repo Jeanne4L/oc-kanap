@@ -5,6 +5,8 @@ let id = params.get('id');
 let qty;
 let colorChoice;
 
+// localStorage.clear()
+
 //request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
 .then(function(response) {
@@ -42,10 +44,10 @@ fetch('http://localhost:3000/api/products')
     // event click => send ID, chosen color and quantity to the cart with localStorage
     let submitBtn = document.querySelector('#addToCart');
     submitBtn.addEventListener('click', () => {
-        let productData = {};
+        let productData = [];
         //if exists in LocalStorage => get it and push new data else create it
         productData = JSON.parse(localStorage.getItem('productData'));
-        
+ 
         if(productData) {
             productData.push({
                 id: id,
@@ -54,6 +56,7 @@ fetch('http://localhost:3000/api/products')
             });
             localStorage.setItem('productData', JSON.stringify(productData));
         } else {
+            productData = [];
             productData.push({
                 id: id,
                 color: colorChoice.value,
@@ -63,5 +66,4 @@ fetch('http://localhost:3000/api/products')
         }
         console.log(productData); 
     })
-    
 })
