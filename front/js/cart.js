@@ -28,7 +28,6 @@ function getProductData(products) {
                 if(products[j]._id == productId) {
                     cart = JSON.parse(localStorage.getItem('cart')); 
                     if(cart) {  
-                        console.log(cart) 
                         for(let i= 0; i<cart.length; i++) {                       
                             if(cart[i].id == productId && cart[i].color == productColor) {
                                 var index = cart.indexOf(cart[i]);
@@ -36,10 +35,10 @@ function getProductData(products) {
                             } else {
                                 var index = -1;
                             }
+                            displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity);
                         }
                         if(index !== null && index !== -1) {
                             cart[index].quantity += productQty
-                            console.log('C\'est le même')
                         } else {
                             cart.push({
                                 id: productId, 
@@ -50,7 +49,6 @@ function getProductData(products) {
                                 image: productImg, 
                                 altText: productAltText
                             });
-                            console.log('C\'est pas le même')
                         }
                         localStorage.setItem('cart', JSON.stringify(cart.sort(tri)));
                         localStorage.removeItem('productData');
@@ -67,7 +65,6 @@ function getProductData(products) {
                         });
                         localStorage.setItem('cart', JSON.stringify(cart));
                         localStorage.removeItem('productData');
-                        console.log('Ça va pas du tout là')
                     }
                     console.log(cart)
                 }
@@ -81,38 +78,30 @@ function tri(a,b) {
 
 let cart = [];
 
-
-
-
-//     // displayCart(productId, productColor, productImg, productAltText, productName, productPrice, productQty);
-//     essaiClass = new NewProductInCart(productId, productColor, productQty, productName, productPrice, productImg, productAltText);
-//     //console.log(productId, productColor, productQty, productName, productPrice, productImg, productAltText)
-// }
-
-// function displayCart (productId, productColor, productImg, productAltText, productName, productPrice, productQty){
-//     document.querySelector('#cart__items').innerHTML += 
-//     '<article class="cart__item" data-id="'+productId+'" data-color="'+productColor+'">'+
-//         '<div class="cart__item__img">'+
-//             '<img src="'+productImg+'" alt="'+productAltText+'">'+
-//             '</div>'+
-//                 '<div class="cart__item__content">'+
-//                     '<div class="cart__item__content__description">'+
-//                         '<h2>'+productName+'</h2>'+
-//                         '<p>'+productColor+'</p>'+
-//                         '<p>'+productPrice+' €</p>'+
-//                     '</div>'+
-//                     '<div class="cart__item__content__settings">'+
-//                         '<div class="cart__item__content__settings__quantity">'+
-//                             '<p>Qté : </p>'+
-//                             '<input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="'+productQty+'">'+
-//                         '</div>'+
-//                     '<div class="cart__item__content__settings__delete">'+
-//                     '<p class="deleteItem">Supprimer</p>'+
-//                 '</div>'+
-//             '</div>'+
-//         '</div>'+
-//     '</article>';
-// }
+function displayCart (id, color, image, altText, name, price, quantity){
+    document.querySelector('#cart__items').innerHTML += 
+    '<article class="cart__item" data-id="'+id+'" data-color="'+color+'">'+
+        '<div class="cart__item__img">'+
+            '<img src="'+image+'" alt="'+altText+'">'+
+            '</div>'+
+                '<div class="cart__item__content">'+
+                    '<div class="cart__item__content__description">'+
+                        '<h2>'+name+'</h2>'+
+                        '<p>'+color+'</p>'+
+                        '<p>'+price*quantity+' €</p>'+
+                    '</div>'+
+                    '<div class="cart__item__content__settings">'+
+                        '<div class="cart__item__content__settings__quantity">'+
+                            '<p>Qté : </p>'+
+                            '<input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="'+quantity+'">'+
+                        '</div>'+
+                    '<div class="cart__item__content__settings__delete">'+
+                    '<p class="deleteItem">Supprimer</p>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+    '</article>';
+}
 
 
 
