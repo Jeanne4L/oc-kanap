@@ -26,9 +26,10 @@ function getProductData(products) {
                 var productAltText = products[j].altTxt;
 
                 if(products[j]._id == productId) {
-                    cart = JSON.parse(localStorage.getItem('cart'));
-                    if(cart) {
-                        for(let i= 0; i<cart.length; i++) {                           
+                    cart = JSON.parse(localStorage.getItem('cart')); 
+                    if(cart) {  
+                        console.log(cart) 
+                        for(let i= 0; i<cart.length; i++) {                       
                             if(cart[i].id == productId && cart[i].color == productColor) {
                                 var index = cart.indexOf(cart[i]);
                                 break;
@@ -51,7 +52,7 @@ function getProductData(products) {
                             });
                             console.log('C\'est pas le même')
                         }
-                        localStorage.setItem('cart', JSON.stringify(cart));
+                        localStorage.setItem('cart', JSON.stringify(cart.sort(tri)));
                         localStorage.removeItem('productData');
                     } else {
                         cart = [];
@@ -74,8 +75,12 @@ function getProductData(products) {
         } 
     }
 }
+function tri(a,b) {
+    return a.name > b.name ? 1 : -1;
+};
 
 let cart = [];
+
 
 
 
