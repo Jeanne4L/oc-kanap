@@ -11,7 +11,6 @@ fetch('http://localhost:3000/api/products')
 
 function getProductData(products) {
     let productData = JSON.parse(localStorage.getItem('productData'));
-    // console.log(productData)
 
     if(productData !== null) {
         for (i=0; i<productData.length; i++) {
@@ -29,18 +28,16 @@ function getProductData(products) {
                 if(products[j]._id == productId) {
                     cart = JSON.parse(localStorage.getItem('cart'));
                     if(cart) {
-                        //console.log(cart)
-                        for(line of cart) {
-                            var alreadyExists = cart.some(line => line.id == productId);
-                            var sameColor = cart.some(line => line.color == productColor);
+                        for(let i= 0; i<cart.length; i++) {                           
+                            if(cart[i].id == productId && cart[i].color == productColor) {
+                                var index = cart.indexOf(cart[i]);
+                                break;
+                            } else {
+                                var index = -1;
+                            }
                         }
-                        if(alreadyExists && sameColor) {
-                            console.log(line)
-                            console.log(productName)
-
-                            line.quantity += productQty
-                            // localStorage.setItem('cart', JSON.stringify(cart));
-                            // localStorage.removeItem('productData');
+                        if(index !== null && index !== -1) {
+                            cart[index].quantity += productQty
                             console.log('C\'est le même')
                         } else {
                             cart.push({
@@ -52,8 +49,6 @@ function getProductData(products) {
                                 image: productImg, 
                                 altText: productAltText
                             });
-                            // localStorage.setItem('cart', JSON.stringify(cart));
-                            // localStorage.removeItem('productData');
                             console.log('C\'est pas le même')
                         }
                         localStorage.setItem('cart', JSON.stringify(cart));
@@ -74,48 +69,6 @@ function getProductData(products) {
                         console.log('Ça va pas du tout là')
                     }
                     console.log(cart)
-
-                    // if(cart.length === 0) {
-                    //     cart.push({
-                    //         id: productId, 
-                    //         color: productColor,
-                    //         quantity: productQty,
-                    //         name: productName, 
-                    //         price: productPrice,
-                    //         image: productImg, 
-                    //         altText: productAltText
-                    //     });
-                    //     localStorage.removeItem('productData');
-                    // } else {
-                    //     for(line of cart) {
-                    //         if(productId === line.id && productColor === line.color) {
-                    //             line.quantity += productQty;
-                    //             localStorage.removeItem('productData');
-                    //         } else {
-                    //             cart.push({
-                    //                 id: productId, 
-                    //                 color: productColor,
-                    //                 quantity: productQty,
-                    //                 name: productName, 
-                    //                 price: productPrice,
-                    //                 image: productImg, 
-                    //                 altText: productAltText
-                    //             });
-                    //             localStorage.removeItem('productData');
-                    //         }
-                    //     }
-                    // }
-                    // var savedCart = [];
-                    // //savedCart = JSON.parse(localStorage.getItem('savedCart'));
-                    // if(savedCart) {
-                    //     savedCart.push(cart);
-                    //     //console.log(savedCart)
-                    //     savedCart.setItem('savedCart', JSON.stringify(savedCart));
-                    // } else {
-                    //     savedCart = [];
-                    //     savedCart.push(cart);
-                    // }
-                    // console.log(savedCart)
                 }
             }
         } 
@@ -125,38 +78,10 @@ function getProductData(products) {
 let cart = [];
 
 
-// function addQty(qty) {
-//     return line.quantity += qty;
-// }
-
-// function NewProductInCart(id, color, qty, name, price, img, altText) {
-//     this.id = id;
-//     this.color = color;
-//     this.qty = qty;
-//     this.name = name;
-//     this.price = price;
-//     this.img = img;
-//     this.altText = altText;
-// }
-
-
 
 //     // displayCart(productId, productColor, productImg, productAltText, productName, productPrice, productQty);
 //     essaiClass = new NewProductInCart(productId, productColor, productQty, productName, productPrice, productImg, productAltText);
 //     //console.log(productId, productColor, productQty, productName, productPrice, productImg, productAltText)
-// }
-
-// function push(cart, product) {
-//     for (let i=0; i<cart.length; i++) {
-//         if(cart.indexOf('productId') == -1) {
-//             console.log('pas trouvé')
-//             cart.push(product);
-//         } else {
-//             console.log('ok');
-//             cart.push('push');
-//         }
-//     }
-//     console.log(cart);
 // }
 
 // function displayCart (productId, productColor, productImg, productAltText, productName, productPrice, productQty){

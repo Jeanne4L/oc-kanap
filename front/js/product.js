@@ -5,7 +5,7 @@ let id = params.get('id');
 let qty;
 let colorChoice;
 
-// localStorage.clear()
+// localStorage.clear()  
 
 //request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
