@@ -17,6 +17,8 @@ fetch('http://localhost:3000/api/products')
 .then(function(products) {
     for (let i =0; i<products.length;i++) {
         if(products[i]._id === id) {
+            document.querySelector('title').textContent = products[i].name;
+
             document.querySelector('.item__img').innerHTML += '<img src="'+products[i].imageUrl+'" alt="'+products[i].altTxt+'">';
 
             document.querySelector('#title').textContent = products[i].name;
@@ -37,7 +39,10 @@ fetch('http://localhost:3000/api/products')
             qty.addEventListener('input', () => {
                 if(qty.value !== 0) {
                     price.textContent = products[i].price * qty.value;
-                } 
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.disabled = true;
+                }
             })
         }
     }
