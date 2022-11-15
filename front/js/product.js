@@ -18,11 +18,8 @@ fetch('http://localhost:3000/api/products')
     for (let i =0; i<products.length;i++) {
         if(products[i]._id === id) {
             document.querySelector('title').textContent = products[i].name;
-
             document.querySelector('.item__img').innerHTML += '<img src="'+products[i].imageUrl+'" alt="'+products[i].altTxt+'">';
-
             document.querySelector('#title').textContent = products[i].name;
-
             document.querySelector('#description').textContent = products[i].description;
 
             //loop through choice of color
@@ -36,23 +33,25 @@ fetch('http://localhost:3000/api/products')
             let price = document.querySelector('#price');
             price.textContent = products[i].price;
             qty = document.querySelector('#quantity');
+            qty.setAttribute('value', 1);
             qty.addEventListener('input', () => {
                 if(qty.value !== 0) {
                     price.textContent = products[i].price * qty.value;
-                    submitBtn.disabled = false;
-                } else {
-                    submitBtn.disabled = true;
-                }
+                } 
             })
         }
     }
-    // event click => send ID, chosen color and quantity to the cart with localStorage
+    sendToCart();
+})
+
+// event click => send ID, chosen color and quantity to the cart with localStorage
+function sendToCart() {
     let submitBtn = document.querySelector('#addToCart');
     submitBtn.addEventListener('click', () => {
         let productData = [];
-        //if exists in LocalStorage => get it and push new data else create it
+        //if exists in LocalStorage => get it and push new information
         productData = JSON.parse(localStorage.getItem('productData'));
- 
+    
         if(productData) {
             productData.push({
                 id: id,
@@ -69,6 +68,5 @@ fetch('http://localhost:3000/api/products')
             });
             localStorage.setItem('productData', JSON.stringify(productData));
         }
-        console.log(productData); 
     })
-})
+}

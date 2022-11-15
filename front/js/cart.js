@@ -1,4 +1,8 @@
-//request to get information whose product corresponds to id
+//
+//        GET INFORMATION FROM PRODUCT TO CART AND DISPLAY ITS
+// 
+
+// request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
 .then(function(response) {
     if(response.ok) {
@@ -9,6 +13,7 @@ fetch('http://localhost:3000/api/products')
     getProductData(products);
 })
 
+// gather products information from API and localStorage
 function getProductData(products) {
     let productData = JSON.parse(localStorage.getItem('productData'));
 
@@ -26,57 +31,69 @@ function getProductData(products) {
                 var productAltText = products[j].altTxt;
 
                 if(products[j]._id == productId) {
-                    cart = JSON.parse(localStorage.getItem('cart')); 
-                    if(cart) {  
-                        for(let i= 0; i<cart.length; i++) {                       
-                            if(cart[i].id == productId && cart[i].color == productColor) {
-                                var index = cart.indexOf(cart[i]);
-                                break;
-                            } else {
-                                var index = -1;
-                            }
-                            displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity);
-                        }
-                        if(index !== null && index !== -1) {
-                            cart[index].quantity += productQty
-                        } else {
-                            cart.push({
-                                id: productId, 
-                                color: productColor,
-                                quantity: productQty,
-                                name: productName, 
-                                price: productPrice,
-                                image: productImg, 
-                                altText: productAltText
-                            });
-                        }
-                        localStorage.setItem('cart', JSON.stringify(cart.sort(tri)));
-                        localStorage.removeItem('productData');
-                    } else {
-                        cart = [];
-                        cart.push({
-                            id: productId, 
-                            color: productColor,
-                            quantity: productQty,
-                            name: productName, 
-                            price: productPrice,
-                            image: productImg, 
-                            altText: productAltText
-                        });
-                        localStorage.setItem('cart', JSON.stringify(cart));
-                        localStorage.removeItem('productData');
-                    }
-                    console.log(cart)
+                    getCart(productId, productColor, productQty, productName, productPrice, productImg, productAltText);
                 }
             }
         } 
     }
 }
+
+let cart = [];
+
+// if exists get cart in localStorage and add new products
+function getCart(id, color, qty, name, price, img, altText) {
+    cart = JSON.parse(localStorage.getItem('cart')); 
+    if(cart) {  
+        for(let i= 0; i<cart.length; i++) { 
+            //get existing row index 
+            if(cart[i].id == id && cart[i].color == color) {
+                var index = cart.indexOf(cart[i]);
+                break;
+            } else {
+                var index = -1;
+            }
+        }
+
+        if(index !== null && index !== -1) {
+            cart[index].quantity += qty
+        } else {
+            cart.push({
+                id: id, 
+                color: color,
+                quantity: qty,
+                name: name, 
+                price: price,
+                image: img, 
+                altText: altText
+            });
+        }
+        localStorage.setItem('cart', JSON.stringify(cart.sort(tri)));
+        localStorage.removeItem('productData');
+
+    } else {
+        cart = [];
+        cart.push({
+            id: id, 
+            color: color,
+            quantity: qty,
+            name: name, 
+            price: price,
+            image: img, 
+            altText: altText
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        localStorage.removeItem('productData');
+    }
+
+    for(let i= 0; i<cart.length; i++) {    
+        displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
+    }
+}
+
+// sort product in alphabetical order
 function tri(a,b) {
     return a.name > b.name ? 1 : -1;
 };
-
-let cart = [];
 
 function displayCart (id, color, image, altText, name, price, quantity){
     document.querySelector('#cart__items').innerHTML += 
@@ -103,6 +120,8 @@ function displayCart (id, color, image, altText, name, price, quantity){
     '</article>';
 }
 
-
+//
+//        GET PRODUCT CHANGES FROM CART PAGE
+// 
 
                     
