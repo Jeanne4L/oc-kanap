@@ -2,6 +2,15 @@
 //        GET INFORMATION FROM PRODUCT TO CART AND DISPLAY ITS
 // 
 
+// if cart exists, display it
+let cart = [];
+cart = JSON.parse(localStorage.getItem('cart')); 
+if (cart !== null) {
+    for(let i= 0; i<cart.length; i++) {    
+        displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity);  
+    }
+}
+
 // request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
 .then(function(response) {
@@ -38,12 +47,12 @@ function getProductData(products) {
     }
 }
 
-let cart = [];
-
 // if exists get cart in localStorage and add new products
 function getCart(id, color, qty, name, price, img, altText) {
     cart = JSON.parse(localStorage.getItem('cart')); 
     if(cart) {  
+        document.querySelector('#cart__items').innerHTML = ''; 
+
         for(let i= 0; i<cart.length; i++) { 
             //get existing row index 
             if(cart[i].id == id && cart[i].color == color) {
@@ -55,7 +64,7 @@ function getCart(id, color, qty, name, price, img, altText) {
         }
 
         if(index !== null && index !== -1) {
-            cart[index].quantity += qty
+            cart[index].price *= (cart[index].quantity += qty)
         } else {
             cart.push({
                 id: id, 
@@ -85,7 +94,7 @@ function getCart(id, color, qty, name, price, img, altText) {
         localStorage.removeItem('productData');
     }
 
-    for(let i= 0; i<cart.length; i++) {    
+    for(let i= 0; i<cart.length; i++) {   
         displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
     }
 }
@@ -94,6 +103,7 @@ function getCart(id, color, qty, name, price, img, altText) {
 function tri(a,b) {
     return a.name > b.name ? 1 : -1;
 };
+
 
 function displayCart (id, color, image, altText, name, price, quantity){
     document.querySelector('#cart__items').innerHTML += 
@@ -105,7 +115,7 @@ function displayCart (id, color, image, altText, name, price, quantity){
                     '<div class="cart__item__content__description">'+
                         '<h2>'+name+'</h2>'+
                         '<p>'+color+'</p>'+
-                        '<p>'+price*quantity+' €</p>'+
+                        '<p>'+price+' €</p>'+
                     '</div>'+
                     '<div class="cart__item__content__settings">'+
                         '<div class="cart__item__content__settings__quantity">'+
@@ -118,10 +128,31 @@ function displayCart (id, color, image, altText, name, price, quantity){
             '</div>'+
         '</div>'+
     '</article>';
+    
+    let qtyInput = document.querySelector('.itemQuantity');
+
+    qtyInput.addEventListener('change', (e) => {
+        var datasetId = qtyInput.closest('[data-id]').dataset.id
+        var datasetColor = qtyInput.closest('[data-color]').dataset.color
+
+        console.log(datasetId, datasetColor)
+          
+        // for (let i =0; i<cart.length; i++) {
+        //     if(cart[i].id == datasetId && cart[i].color == datasetColor) {
+        //         cart[i].price /= cart[i].quantity
+        //         cart[i].quantity = e.target.value
+        //         cart[i].price *= cart[i].quantity
+        
+        //         let div = document.querySelector('.cart__item__content__description')
+        //         let p = div.lastChild
+        //         p.textContent = cart[i].price + ' €';
+        //     }
+        // }
+    })
 }
 
 //
 //        GET PRODUCT CHANGES FROM CART PAGE
 // 
 
-                    
+
