@@ -10,6 +10,8 @@ if (cart !== null) {
         displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity);  
     }
 }
+changeQty()
+// deleteProduct()
 
 // request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
@@ -71,12 +73,12 @@ function getCart(id, color, qty, name, price, img, altText) {
                 color: color,
                 quantity: qty,
                 name: name, 
-                price: price,
+                price: price * qty,
                 image: img, 
                 altText: altText
             });
         }
-        localStorage.setItem('cart', JSON.stringify(cart.sort(tri)));
+        localStorage.setItem('cart', JSON.stringify(cart.sort(sorting)));
         localStorage.removeItem('productData');
 
     } else {
@@ -86,7 +88,7 @@ function getCart(id, color, qty, name, price, img, altText) {
             color: color,
             quantity: qty,
             name: name, 
-            price: price,
+            price: price * qty,
             image: img, 
             altText: altText
         });
@@ -97,62 +99,95 @@ function getCart(id, color, qty, name, price, img, altText) {
     for(let i= 0; i<cart.length; i++) {   
         displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
     }
+    changeQty()
+    deleteProduct()
 }
 
 // sort product in alphabetical order
-function tri(a,b) {
+function sorting(a,b) {
     return a.name > b.name ? 1 : -1;
 };
 
-
-function displayCart (id, color, image, altText, name, price, quantity){
+function displayCart (id, color, image, alt, name, price, quantity){
     document.querySelector('#cart__items').innerHTML += 
     '<article class="cart__item" data-id="'+id+'" data-color="'+color+'">'+
         '<div class="cart__item__img">'+
-            '<img src="'+image+'" alt="'+altText+'">'+
+            '<img src="'+image+'" alt="'+alt+'">'+
+        '</div>'+
+        '<div class="cart__item__content">'+
+            '<div class="cart__item__content__description">'+
+                '<h2>'+name+'</h2>'+
+                '<p>'+color+'</p>'+
+                '<p>'+price+' €</p>'+
             '</div>'+
-                '<div class="cart__item__content">'+
-                    '<div class="cart__item__content__description">'+
-                        '<h2>'+name+'</h2>'+
-                        '<p>'+color+'</p>'+
-                        '<p>'+price+' €</p>'+
-                    '</div>'+
-                    '<div class="cart__item__content__settings">'+
-                        '<div class="cart__item__content__settings__quantity">'+
-                            '<p>Qté : </p>'+
-                            '<input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="'+quantity+'">'+
-                        '</div>'+
-                    '<div class="cart__item__content__settings__delete">'+
-                    '<p class="deleteItem">Supprimer</p>'+
+            '<div class="cart__item__content__settings">'+
+                '<div class="cart__item__content__settings__quantity">'+
+                    '<p>Qté : </p>'+
+                    '<input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="'+quantity+'">'+
                 '</div>'+
+                '<div class="cart__item__content__settings__delete">'+
+                    '<p class="deleteItem">Supprimer</p>'+
+                '</div'+
             '</div>'+
         '</div>'+
     '</article>';
-    
-    let qtyInput = document.querySelector('.itemQuantity');
-
-    qtyInput.addEventListener('change', (e) => {
-        var datasetId = qtyInput.closest('[data-id]').dataset.id
-        var datasetColor = qtyInput.closest('[data-color]').dataset.color
-
-        console.log(datasetId, datasetColor)
-          
-        // for (let i =0; i<cart.length; i++) {
-        //     if(cart[i].id == datasetId && cart[i].color == datasetColor) {
-        //         cart[i].price /= cart[i].quantity
-        //         cart[i].quantity = e.target.value
-        //         cart[i].price *= cart[i].quantity
-        
-        //         let div = document.querySelector('.cart__item__content__description')
-        //         let p = div.lastChild
-        //         p.textContent = cart[i].price + ' €';
-        //     }
-        // }
-    })
 }
 
 //
 //        GET PRODUCT CHANGES FROM CART PAGE
 // 
 
+function changeQty() {
+    let qtyInput = document.querySelectorAll('.itemQuantity');
 
+    for( let i=0; i<qtyInput.length; i++) {
+        qtyInput[i].addEventListener('change', (e) => {
+            let inputValue = Number(e.target.value);
+            let datasetId = qtyInput[i].closest('[data-id]').dataset.id
+            let datasetColor = qtyInput[i].closest('[data-color]').dataset.color
+
+            let containerDiv = qtyInput[i].closest('.cart__item__content')
+            let descriptionDiv = containerDiv.firstChild;
+            let priceDisplay = descriptionDiv.lastChild;
+            
+            for (let j =0; j<cart.length; j++) {
+                if(cart[j].id == datasetId && cart[j].color == datasetColor) {
+                    
+                    cart[j].price /= cart[j].quantity 
+                    cart[j].quantity = inputValue
+                    if(inputValue == 0 || inputValue == null) {
+                        cart[j].quantity = 1  
+                        qtyInput[i].value = cart[j].quantity
+                    }
+                    cart[j].price *= cart[j].quantity
+
+                    priceDisplay.textContent = cart[j].price + ' €';
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+            }
+        })
+    }
+}
+
+function deleteProduct() {
+    let deleteBtn = document.querySelectorAll('.deleteItem');
+
+    for( let i=0; i<deleteBtn.length; i++) {
+        deleteBtn[i].addEventListener('click', () => {
+            let datasetId = deleteBtn[i].closest('[data-id]').dataset.id
+            let datasetColor = deleteBtn[i].closest('[data-color]').dataset.color
+
+            for (let j=0; j<cart.length; j++) {
+                if(cart[j].id == datasetId && cart[j].color == datasetColor) {
+                    let index = cart.indexOf(cart[j])
+                    cart.splice(index, 1)
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+            }
+            document.querySelector('#cart__items').innerHTML = ''; 
+            for(let i= 0; i<cart.length; i++) {   
+                displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
+            }
+        })
+    }
+}
