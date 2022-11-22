@@ -9,9 +9,10 @@ if (cart !== null) {
     for(let i= 0; i<cart.length; i++) {    
         displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity);  
     }
+    calcTotal()
 }
 changeQty()
-// deleteProduct()
+deleteProduct()
 
 // request to get information whose product corresponds to id
 fetch('http://localhost:3000/api/products')
@@ -65,7 +66,7 @@ function getCart(id, color, qty, name, price, img, altText) {
             }
         }
 
-        if(index !== null && index !== -1) {
+        if(index !== null && index !== -1 && cart.length !== 0) {
             cart[index].price *= (cart[index].quantity += qty)
         } else {
             cart.push({
@@ -99,6 +100,7 @@ function getCart(id, color, qty, name, price, img, altText) {
     for(let i= 0; i<cart.length; i++) {   
         displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
     }
+    calcTotal()
     changeQty()
     deleteProduct()
 }
@@ -164,6 +166,7 @@ function changeQty() {
                     priceDisplay.textContent = cart[j].price + ' €';
                     localStorage.setItem('cart', JSON.stringify(cart));
                 }
+                calcTotal()
             }
         })
     }
@@ -178,6 +181,9 @@ function deleteProduct() {
             let datasetColor = deleteBtn[i].closest('[data-color]').dataset.color
 
             for (let j=0; j<cart.length; j++) {
+                // if(cart.length == 1) {
+                //     cart = null
+                // }
                 if(cart[j].id == datasetId && cart[j].color == datasetColor) {
                     let index = cart.indexOf(cart[j])
                     cart.splice(index, 1)
@@ -188,6 +194,19 @@ function deleteProduct() {
             for(let i= 0; i<cart.length; i++) {   
                 displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
             }
+            calcTotal()
         })
     }
+}
+
+function calcTotal() {
+    let totalPrice = 0;
+    let totalQty = 0;
+
+    for( let i=0; i<cart.length; i++) {
+        totalPrice += cart[i].price
+        totalQty += cart[i].quantity
+    }
+    document.querySelector('#totalQuantity').textContent = totalQty
+    document.querySelector('#totalPrice').textContent = totalPrice
 }
