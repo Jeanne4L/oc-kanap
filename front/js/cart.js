@@ -210,3 +210,112 @@ function calcTotal() {
     document.querySelector('#totalQuantity').textContent = totalQty
     document.querySelector('#totalPrice').textContent = totalPrice
 }
+
+//
+//        FORM
+// 
+
+let firstName = document.querySelector('#firstName')
+let lastName = document.querySelector('#lastName')
+let address = document.querySelector('#address')
+let city = document.querySelector('#city')
+let email = document.querySelector('#email')
+let orderBtn = document.querySelector('#order')
+
+let letterRegex = /[A-Za-z]/g
+let nbAndLetterRegex = /\w/g
+let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+
+// let contact = [];
+// contact = JSON.parse(localStorage.getItem('contact')); 
+
+// function saveContact(firstName, lastName, address, city, email) {
+//     if(contact) {
+//         contact.push({
+//             firstName: firstName, 
+//             lastName: lastName,
+//             address: address,
+//             city: city, 
+//             email: email
+//         });
+//         localStorage.setItem('contact', JSON.stringify(contact));
+//     } else {
+//         let contact = [];
+//         contact.push({
+//             firstName: firstName, 
+//             lastName: lastName,
+//             address: address,
+//             city: city, 
+//             email: email
+//         });
+//         localStorage.setItem('contact', JSON.stringify(contact));
+//     }
+// }
+
+firstName.addEventListener('input', (e) => {
+    if(letterRegex.test(e.target.value)) {
+        document.querySelector('#firstNameErrorMsg').textContent = ''
+    } else {
+        document.querySelector('#firstNameErrorMsg').textContent = 'Vous devez saisir votre prénom'
+    }
+})
+lastName.addEventListener('input', (e) => {
+    if(letterRegex.test(e.target.value)) {
+        document.querySelector('#lastNameErrorMsg').textContent = ''
+    } else {
+        document.querySelector('#lastNameErrorMsg').textContent = 'Vous devez saisir votre nom de famille'
+    }
+})
+address.addEventListener('input', (e) => {
+    if(nbAndLetterRegex.test(e.target.value)) {
+        document.querySelector('#addressErrorMsg').textContent = ''
+    } else {
+        document.querySelector('#addressErrorMsg').textContent = 'Vous devez saisir votre adresse'
+    }
+})
+city.addEventListener('input', (e) => {
+    if(letterRegex.test(e.target.value)) {
+        document.querySelector('#cityErrorMsg').textContent = ''
+    } else {
+        document.querySelector('#cityErrorMsg').textContent = 'Vous devez saisir votre ville'
+    }
+})
+email.addEventListener('input', (e) => {
+    if(emailRegex.test(e.target.value)) {
+        document.querySelector('#emailErrorMsg').textContent = ''
+    } else {
+        document.querySelector('#emailErrorMsg').textContent = 'Email invalide'
+    }
+})
+
+orderBtn.addEventListener('submit', sendToApi)
+
+function sendToApi(e) {
+    //e.preventDefault()
+    fetch('http://localhost:3000/api/products/order', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            adress:  document.getElementById("adress").value,
+            city:  document.getElementById("city").value,
+            email: document.getElementById("email").value
+        })
+    })
+    .then(function(response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            alert('erreur')
+        }
+    })
+    .then(function(json) {
+        console.log(json);
+    })
+    .catch(function(error) {
+        console.log(error)
+    })
+}
