@@ -1,72 +1,78 @@
 //get id from url
-let productIdParams = new URLSearchParams(document.location.search);
-let id = productIdParams.get('id');
+let productIdParams = new URLSearchParams(document.location.search)
+let id = productIdParams.get('id')
 
-let qty;
-let colorChoice;
+let qty
+let colorChoice
 
-// localStorage.clear()  
-
-//request to get information whose product corresponds to id
-fetch('http://localhost:3000/api/products')
-.then(function(response) {
+// get product information from API
+async function fetchProduct() {
+    const response = await fetch('http://localhost:3000/api/products/'+id)
     if(response.ok) {
-        return response.json();
+        return response.json()
     }
-})
-.then(function(products) {
-    for (let i =0; i<products.length;i++) {
-        if(products[i]._id === id) {
-            document.querySelector('title').textContent = products[i].name;
-            document.querySelector('.item__img').innerHTML += '<img src="'+products[i].imageUrl+'" alt="'+products[i].altTxt+'">';
-            document.querySelector('#title').textContent = products[i].name;
-            document.querySelector('#description').textContent = products[i].description;
+    throw new Error('Impossible d\'accéder au serveur')
+}
 
-            //loop through choice of color
-            let colors = products[i].colors;
-            for(let c = 0; c < colors.length; c++) {
-                colorChoice = document.querySelector('#colors');
-                colorChoice.innerHTML += '<option value="'+products[i].colors[c]+'">'+products[i].colors[c]+'</option>';
-            }
-
-            //change price according to quantity
-            let price = document.querySelector('#price');
-            price.textContent = products[i].price;
-            qty = document.querySelector('#quantity');
-            qty.setAttribute('value', 1);
-            qty.addEventListener('input', () => {
-                if(qty.value !== 0) {
-                    price.textContent = products[i].price * qty.value;
-                } 
-            })
-        }
-    }
-    sendToCart();
+fetchProduct()
+.then(function(product) {
+    targetElement(product)
+    getColors(product)
+    calcPrice(product)
+    sendToCart()
 })
 
-// event click => send ID, chosen color and quantity to the cart with localStorage
+//select elements
+function targetElement(product) {
+    document.querySelector('title').textContent = product.name
+    document.querySelector('.item__img').innerHTML += '<img src="'+product.imageUrl+'" alt="'+product.altTxt+'">'
+    document.querySelector('#title').textContent = product.name
+    document.querySelector('#description').textContent = product.description
+}
+
+// choose color
+function getColors(product) {
+    let colors = product.colors
+    for(let c = 0; c < colors.length; c++) {
+        colorChoice = document.querySelector('#colors')
+        colorChoice.innerHTML += '<option value="'+product.colors[c]+'">'+product.colors[c]+'</option>'
+    }
+}
+
+// change price according to quantity
+function calcPrice(product) {
+    let price = document.querySelector('#price')
+    price.textContent = product.price
+    qty = document.querySelector('#quantity')
+    qty.setAttribute('value', 1)
+    qty.addEventListener('input', () => {
+        if(qty.value !== 0) {
+            price.textContent = product.price * qty.value
+        } 
+    })
+}
+// send ID, chosen color and quantity to the cart with localStorage
 function sendToCart() {
-    let submitBtn = document.querySelector('#addToCart');
-    submitBtn.addEventListener('click', () => {
-        let productData = [];
+    document.querySelector('#addToCart').addEventListener('click', () => {
+        let productData = []
         //if exists in LocalStorage => get it and push new information
-        productData = JSON.parse(localStorage.getItem('productData'));
+        productData = JSON.parse(localStorage.getItem('productData'))
     
         if(productData) {
             productData.push({
                 id: id,
                 color: colorChoice.value,
                 quantity: qty.value
-            });
-            localStorage.setItem('productData', JSON.stringify(productData));
+            })
+            localStorage.setItem('productData', JSON.stringify(productData))
         } else {
-            productData = [];
+            productData = []
             productData.push({
                 id: id,
                 color: colorChoice.value,
                 quantity: qty.value
-            });
-            localStorage.setItem('productData', JSON.stringify(productData));
+            })
+            localStorage.setItem('productData', JSON.stringify(productData))
         }
     })
 }
