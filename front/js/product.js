@@ -33,9 +33,9 @@ function targetElement(product) {
 // choose color
 function getColors(product) {
     let colors = product.colors
-    for(let c = 0; c < colors.length; c++) {
+    for(let i = 0; i < colors.length; i++) {
         colorChoice = document.querySelector('#colors')
-        colorChoice.innerHTML += '<option value="'+product.colors[c]+'">'+product.colors[c]+'</option>'
+        colorChoice.innerHTML += '<option value="'+colors[i]+'">'+colors[i]+'</option>'
     }
 }
 
@@ -57,7 +57,7 @@ function sendToCart() {
         let productData = []
         //if exists in LocalStorage => get it and push new information
         productData = JSON.parse(localStorage.getItem('productData'))
-    
+            
         if(productData) {
             productData.push({
                 id: id,
@@ -73,6 +73,6 @@ function sendToCart() {
                 quantity: qty.value
             })
             localStorage.setItem('productData', JSON.stringify(productData))
-        }
+        }  
     })
 }

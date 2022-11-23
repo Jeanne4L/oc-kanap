@@ -65,9 +65,9 @@ function getCart(id, color, qty, name, price, img, altText) {
                 var index = -1;
             }
         }
-
+        // problème addition prix
         if(index !== null && index !== -1 && cart.length !== 0) {
-            cart[index].price *= (cart[index].quantity += qty)
+            cart[index].price = price * (cart[index].quantity += qty)
         } else {
             cart.push({
                 id: id, 
@@ -195,6 +195,7 @@ function deleteProduct() {
                 displayCart(cart[i].id, cart[i].color, cart[i].image, cart[i].altText, cart[i].name, cart[i].price, cart[i].quantity); 
             }
             calcTotal()
+            deleteProduct()
         })
     }
 }
