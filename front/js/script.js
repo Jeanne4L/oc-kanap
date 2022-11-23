@@ -1,11 +1,15 @@
-//request to get products information and if exist, display its
-fetch('http://localhost:3000/api/products')
-.then(function(response) {
+// GET request to API
+async function fetchProducts() {
+    const response = await fetch('http://localhost:3000/api/products')
     if(response.ok) {
         return response.json();
     }
-})
-.then(function(products){
+    throw new Error('Impossible d\'accéder au serveur')
+}
+
+// display products
+fetchProducts()
+.then(function(products) {
     for (let i = 0; i< products.length; i++) {
         
         document.querySelector('#items').innerHTML += 
@@ -15,9 +19,6 @@ fetch('http://localhost:3000/api/products')
                 '<h3 class="productName">'+products[i].name+'</h3>'+
                 '<p class="productDescription">'+products[i].description+'</p>'+
             '</article>'+
-        '</a>';
+        '</a>'
     }
-})
-.catch(function (erreur) {
-    erreur = alert('Erreur');
 })
