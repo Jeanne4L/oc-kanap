@@ -215,107 +215,81 @@ function calcTotal() {
 //        FORM
 // 
 
-let firstName = document.querySelector('#firstName')
-let lastName = document.querySelector('#lastName')
-let address = document.querySelector('#address')
-let city = document.querySelector('#city')
-let email = document.querySelector('#email')
-let orderBtn = document.querySelector('#order')
-
 let letterRegex = /[A-Za-z]/g
 let nbAndLetterRegex = /\w/g
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-// let contact = [];
-// contact = JSON.parse(localStorage.getItem('contact')); 
+let contact = {}
+let products= []
 
-// function saveContact(firstName, lastName, address, city, email) {
-//     if(contact) {
-//         contact.push({
-//             firstName: firstName, 
-//             lastName: lastName,
-//             address: address,
-//             city: city, 
-//             email: email
-//         });
-//         localStorage.setItem('contact', JSON.stringify(contact));
-//     } else {
-//         let contact = [];
-//         contact.push({
-//             firstName: firstName, 
-//             lastName: lastName,
-//             address: address,
-//             city: city, 
-//             email: email
-//         });
-//         localStorage.setItem('contact', JSON.stringify(contact));
-//     }
-// }
-
-firstName.addEventListener('input', (e) => {
+// check input value
+document.querySelector('#firstName').addEventListener('change', (e) => {
     if(letterRegex.test(e.target.value)) {
         document.querySelector('#firstNameErrorMsg').textContent = ''
+        contact.firstName = e.target.value
     } else {
         document.querySelector('#firstNameErrorMsg').textContent = 'Vous devez saisir votre prénom'
     }
 })
-lastName.addEventListener('input', (e) => {
+document.querySelector('#lastName').addEventListener('change', (e) => {
     if(letterRegex.test(e.target.value)) {
         document.querySelector('#lastNameErrorMsg').textContent = ''
+        contact.lastName = e.target.value
     } else {
         document.querySelector('#lastNameErrorMsg').textContent = 'Vous devez saisir votre nom de famille'
     }
 })
-address.addEventListener('input', (e) => {
+document.querySelector('#address').addEventListener('change', (e) => {
     if(nbAndLetterRegex.test(e.target.value)) {
         document.querySelector('#addressErrorMsg').textContent = ''
+        contact.address = e.target.value
     } else {
         document.querySelector('#addressErrorMsg').textContent = 'Vous devez saisir votre adresse'
     }
 })
-city.addEventListener('input', (e) => {
+document.querySelector('#city').addEventListener('change', (e) => {
     if(letterRegex.test(e.target.value)) {
         document.querySelector('#cityErrorMsg').textContent = ''
+        contact.city = e.target.value
     } else {
         document.querySelector('#cityErrorMsg').textContent = 'Vous devez saisir votre ville'
     }
 })
-email.addEventListener('input', (e) => {
+document.querySelector('#email').addEventListener('change', (e) => {
     if(emailRegex.test(e.target.value)) {
         document.querySelector('#emailErrorMsg').textContent = ''
+        contact.email = e.target.value
     } else {
         document.querySelector('#emailErrorMsg').textContent = 'Email invalide'
     }
 })
 
-orderBtn.addEventListener('submit', sendToApi)
+// submit
+document.querySelector('#order').addEventListener('click', (e) => {
+    e.preventDefault()
+    for (let i=0; i<cart.length; i++) {
+        products.push(cart[i].id)
+    }
+    fetchProducts().then(function(order) {
+        let orderId= order.orderId
+        window.location.href='./confirmation.html?id='+orderId
+    })
+})
 
-function sendToApi(e) {
-    //e.preventDefault()
-    fetch('http://localhost:3000/api/products/order', {
-        method: "POST",
+async function fetchProducts() {
+    const res = await fetch('http://localhost:3000/api/products/order', {
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            "Content-Type": "application/json"										
         },
         body: JSON.stringify({
-            firstName: document.getElementById("firstName").value,
-            lastName: document.getElementById("lastName").value,
-            adress:  document.getElementById("adress").value,
-            city:  document.getElementById("city").value,
-            email: document.getElementById("email").value
+            contact,
+            products
         })
     })
-    .then(function(response) {
-        if (response.ok) {
-            return response.json();
-        } else {
-            alert('erreur')
-        }
-    })
-    .then(function(json) {
-        console.log(json);
-    })
-    .catch(function(error) {
-        console.log(error)
-    })
+    if (res.ok) {
+        return res.json()
+    } 
+    throw new Error(res.status)
 }

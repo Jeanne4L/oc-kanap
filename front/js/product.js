@@ -1,6 +1,6 @@
 //get id from url
-let params = new URLSearchParams(document.location.search);
-let id = params.get('id');
+let productIdParams = new URLSearchParams(document.location.search);
+let id = productIdParams.get('id');
 
 let qty;
 let colorChoice;
