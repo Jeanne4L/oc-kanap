@@ -1,8 +1,8 @@
 // if cart exists, display it
 let cart = [];
-cart = JSON.parse(localStorage.getItem('cart')); 
+cart = JSON.parse(localStorage.getItem('cart'))
 if (cart !== null) {
-    displayCart();  
+    displayCart()  
     calcTotalPrice()
     changeQty()
     deleteProduct()
@@ -12,7 +12,7 @@ if (cart !== null) {
 async function fetchProductsInApi() {
     const response = await fetch('http://localhost:3000/api/products')
     if(response.ok) {
-        return response.json();
+        return response.json()
     }
     throw new Error('Impossible d\'accéder au serveur')
 }
@@ -20,22 +20,25 @@ fetchProductsInApi().then(products => getProductData(products))
 
 // compare and gather product information
 function getProductData(products) {
-    let productData = JSON.parse(localStorage.getItem('productData'));
+    let productData = JSON.parse(localStorage.getItem('productData'))
 
     if(productData !== null) {
         for (i=0; i<productData.length; i++) {
-            var productId = productData[i].id;
-            var productColor = productData[i].color;
-            var productQty = Number(productData[i].quantity); 
-    
+            var productId = productData[i].id
+            var productColor = productData[i].color
+            var productQty = Number(productData[i].quantity)
+
             for (var j =0; j<products.length; j++) {
-                var productName = products[j].name;
-                var productPrice = products[j].price;
-                var productImg = products[j].imageUrl;
-                var productAltText = products[j].altTxt;
+                var productName = products[j].name
+                var productPrice = products[j].price
+                var productImg = products[j].imageUrl
+                var productAltText = products[j].altTxt
 
                 if(products[j]._id == productId) {
-                    getCart(productId, productColor, productQty, productName, productPrice, productImg, productAltText);
+                    getCart(productId, productColor, productQty, productName, productPrice, productImg, productAltText)
+                    if(productColor == null) {
+
+                    }
                 }
             }
         } 
@@ -44,17 +47,17 @@ function getProductData(products) {
 
 // if exists get cart in localStorage and add new products
 function getCart(id, color, qty, name, price, img, altText) {
-    cart = JSON.parse(localStorage.getItem('cart')); 
+    cart = JSON.parse(localStorage.getItem('cart'))
     if(cart) {  
-        document.querySelector('#cart__items').innerHTML = ''; 
+        document.querySelector('#cart__items').innerHTML = ''
 
         //get existing row index 
         for(let i= 0; i<cart.length; i++) { 
             if(cart[i].id == id && cart[i].color == color) {
-                var index = cart.indexOf(cart[i]);
-                break;
+                var index = cart.indexOf(cart[i])
+                break
             } else {
-                var index = -1;
+                var index = -1
             }
         }
 
@@ -63,14 +66,14 @@ function getCart(id, color, qty, name, price, img, altText) {
         } else {
             pushProduct(id, color, qty, name, price, img, altText)
         }
-        localStorage.setItem('cart', JSON.stringify(cart.sort(sorting)));
-        localStorage.removeItem('productData');
+        localStorage.setItem('cart', JSON.stringify(cart.sort(sorting)))
+        localStorage.removeItem('productData')
 
     } else {
         cart = [];
-        pushProduct()
-        localStorage.setItem('cart', JSON.stringify(cart));
-        localStorage.removeItem('productData');
+        pushProduct(id, color, qty, name, price, img, altText)
+        localStorage.setItem('cart', JSON.stringify(cart))
+        localStorage.removeItem('productData')
     }
     displayCart(); 
     calcTotalPrice()
@@ -80,7 +83,7 @@ function getCart(id, color, qty, name, price, img, altText) {
 
 // sort product in alphabetical order
 function sorting(a,b) {
-    return a.name > b.name ? 1 : -1;
+    return a.name > b.name ? 1 : -1
 };
 
 // push new product
@@ -93,7 +96,7 @@ function pushProduct(id, color, qty, name, price, img, altText) {
         price: price * qty,
         image: img, 
         altText: altText
-    });
+    })
 }
 
 function displayCart(){
@@ -119,13 +122,13 @@ function displayCart(){
                     '</div'+
                 '</div>'+
             '</div>'+
-        '</article>';
+        '</article>'
     }
 }
 
 function calcTotalPrice() {
-    let totalPrice = 0;
-    let totalQty = 0;
+    let totalPrice = 0
+    let totalQty = 0
 
     for( let i=0; i<cart.length; i++) {
         totalPrice += cart[i].price
@@ -140,17 +143,17 @@ function calcTotalPrice() {
 // 
 
 function changeQty() {
-    let qtyInput = document.querySelectorAll('.itemQuantity');
+    let qtyInput = document.querySelectorAll('.itemQuantity')
 
     for( let i=0; i<qtyInput.length; i++) {
         qtyInput[i].addEventListener('change', (e) => {
-            let inputValue = Number(e.target.value);
+            let inputValue = Number(e.target.value)
             let datasetId = qtyInput[i].closest('[data-id]').dataset.id
             let datasetColor = qtyInput[i].closest('[data-color]').dataset.color
 
             let containerDiv = qtyInput[i].closest('.cart__item__content')
-            let descriptionDiv = containerDiv.firstChild;
-            let priceDisplay = descriptionDiv.lastChild;
+            let descriptionDiv = containerDiv.firstChild
+            let priceDisplay = descriptionDiv.lastChild
             
             for (let j =0; j<cart.length; j++) {
                 if(cart[j].id == datasetId && cart[j].color == datasetColor) {
@@ -163,8 +166,8 @@ function changeQty() {
                     }
                     cart[j].price *= cart[j].quantity
 
-                    priceDisplay.textContent = cart[j].price + ' €';
-                    localStorage.setItem('cart', JSON.stringify(cart));
+                    priceDisplay.textContent = cart[j].price + ' €'
+                    localStorage.setItem('cart', JSON.stringify(cart))
                 }
                 calcTotalPrice()
             }
@@ -196,9 +199,9 @@ function deleteProduct() {
     }
 }
 
-// //
-// //        FORM
-// // 
+//
+//        FORM
+// 
 
 let letterRegex = /[^A-Za-z]/
 let nbAndLetterRegex = /[^\w\s]/
