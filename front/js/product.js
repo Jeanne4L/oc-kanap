@@ -54,25 +54,27 @@ function calcPrice(product) {
 // send ID, chosen color and quantity to the cart with localStorage
 function sendToCart() {
     document.querySelector('#addToCart').addEventListener('click', () => {
-        let productData = []
-        //if exists in LocalStorage => get it and push new information
-        productData = JSON.parse(localStorage.getItem('productData'))
-            
-        if(productData) {
-            productData.push({
-                id: id,
-                color: colorChoice.value,
-                quantity: qty.value
-            })
-            localStorage.setItem('productData', JSON.stringify(productData))
-        } else {
-            productData = []
-            productData.push({
-                id: id,
-                color: colorChoice.value,
-                quantity: qty.value
-            })
-            localStorage.setItem('productData', JSON.stringify(productData))
-        }  
+        if(colorChoice.value !== '') {
+            let productData = []
+            //if exists in LocalStorage => get it and push new information
+            productData = JSON.parse(localStorage.getItem('productData'))
+                
+            if(productData) {
+                productData.push({
+                    id: id,
+                    color: colorChoice.value,
+                    quantity: qty.value
+                })
+                localStorage.setItem('productData', JSON.stringify(productData))
+            } else {
+                productData = []
+                productData.push({
+                    id: id,
+                    color: colorChoice.value,
+                    quantity: qty.value
+                })
+                localStorage.setItem('productData', JSON.stringify(productData))
+            } 
+        } 
     })
 }
